@@ -12,7 +12,7 @@ const userSchema = new Schema({
   name: { type: String, required: true },
   age: { type: Number, required: true },
   status: { type: String, default: "active" }
-})
+}, { timestamps: true });
 
 // Model
 const User = mongoose.model('User', userSchema);
@@ -28,6 +28,35 @@ app.get('/users', async (req, res) => {
     console.error('Error fetching users:', error);
   }
 })
+
+app.post('/users', async (req, res) => {
+  try {
+    await User.insertOne(req.body);
+    res.json({message: 'success input user'});
+  } catch (error) {
+    console.error('Error while input data user: ', error);
+  }
+});
+
+app.put('/users', async (req, res) => {
+  try {
+    const id = req.body.id;
+    await User.findByIdAndUpdate(id, req.body)
+    res.json({message: 'success update user'});
+  } catch (error) {
+    console.error('Error while update data user: ', error);
+  }
+});
+
+app.delete('/users', async (req, res) => {
+  try {
+    const {id} = req.body;
+    await User.findByIdAndDelete(id)
+    res.json({message: 'success delete user'});
+  } catch (error) {
+    console.error('Error while delete data user: ', error);
+  }
+});
 
 app.listen(3000, '127.0.0.1', () => {
   console.log('Running server at http://127.0.0.1:3000');
